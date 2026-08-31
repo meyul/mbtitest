@@ -1,13 +1,174 @@
+```python
 import streamlit as st
 
-# 페이지 설정
+# =========================================================
+# 기본 설정
+# =========================================================
+
 st.set_page_config(
-    page_title="MBTI 진로 탐색",
+    page_title="꿈꾸는 나침반",
     page_icon="🧭",
     layout="centered"
 )
 
-# MBTI별 진로 데이터
+# =========================================================
+# 스타일
+# =========================================================
+
+st.markdown("""
+<style>
+    /* 전체 배경 */
+    .stApp {
+        background: #F4FBF8;
+    }
+
+    /* 기본 글씨 */
+    html, body, [class*="css"] {
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+    }
+
+    /* 제목 */
+    .main-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #315C52;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+        color: #6D8580;
+        margin-bottom: 25px;
+    }
+
+    /* 페이지 헤더 */
+    .page-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #315C52;
+        margin-bottom: 5px;
+    }
+
+    .page-description {
+        color: #718681;
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
+
+    /* 카드 */
+    .card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin: 12px 0;
+        border: 1px solid #DDEDE8;
+        box-shadow: 0 5px 18px rgba(70, 120, 105, 0.08);
+    }
+
+    .career-number {
+        display: inline-block;
+        background: #DDF4EC;
+        color: #397466;
+        border-radius: 50px;
+        padding: 5px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .career-title {
+        font-size: 23px;
+        font-weight: 800;
+        color: #315C52;
+        margin-bottom: 8px;
+    }
+
+    .career-description {
+        color: #687D78;
+        line-height: 1.7;
+    }
+
+    /* MBTI 카드 */
+    .mbti-card {
+        background: #E8F7F1;
+        border-radius: 20px;
+        padding: 22px;
+        margin: 15px 0 25px 0;
+        border: 1px solid #D2ECE3;
+    }
+
+    .mbti-name {
+        font-size: 24px;
+        font-weight: 800;
+        color: #315C52;
+    }
+
+    .mbti-description {
+        color: #637B75;
+        margin-top: 8px;
+    }
+
+    /* TIP 카드 */
+    .tip-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        margin: 12px 0;
+        border-left: 6px solid #9BD8C6;
+        box-shadow: 0 4px 14px rgba(70, 120, 105, 0.07);
+    }
+
+    .tip-title {
+        font-size: 19px;
+        font-weight: 750;
+        color: #315C52;
+    }
+
+    .tip-text {
+        color: #687D78;
+        line-height: 1.7;
+        margin-top: 6px;
+    }
+
+    /* 하단 안내 */
+    .footer {
+        text-align: center;
+        color: #91A7A1;
+        font-size: 13px;
+        padding: 30px 0 10px 0;
+    }
+
+    /* Streamlit 버튼 */
+    div.stButton > button {
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid #C9E8DE;
+        background: white;
+        color: #397466;
+        font-weight: 700;
+        padding: 12px;
+        transition: 0.2s;
+    }
+
+    div.stButton > button:hover {
+        border-color: #83C9B5;
+        background: #E8F7F1;
+        color: #315C52;
+    }
+
+    /* 선택창 */
+    div[data-baseweb="select"] > div {
+        border-radius: 14px;
+        border-color: #C9E8DE;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+# =========================================================
+# MBTI 데이터
+# =========================================================
+
 CAREERS = {
     "ISTJ": {
         "title": "신중하고 책임감 있는 현실주의자",
@@ -156,55 +317,228 @@ CAREERS = {
 }
 
 
-# -----------------------------
-# 화면
-# -----------------------------
+# =========================================================
+# 세션 상태
+# =========================================================
 
-st.title("🧭 MBTI 진로 탐색")
-st.write("### 나에게 잘 맞을 수 있는 직업을 찾아볼까요?")
+if "page" not in st.session_state:
+    st.session_state.page = "home"
 
-st.info(
-    "💡 MBTI는 직업을 결정해 주는 검사가 아니에요. "
-    "자신에게 맞을 수 있는 진로를 탐색하는 참고 자료로 활용해 주세요!"
-)
+
+def go_to(page):
+    st.session_state.page = page
+
+
+# =========================================================
+# 사이드바
+# =========================================================
+
+with st.sidebar:
+    st.markdown("## 🧭 꿈꾸는 나침반")
+    st.caption("청소년 진로 탐색 도우미")
+
+    st.divider()
+
+    if st.button("🏠  홈"):
+        go_to("home")
+
+    if st.button("🧭  MBTI 진로 탐색"):
+        go_to("mbti")
+
+    if st.button("🌱  나의 진로 TIP"):
+        go_to("tips")
+
+    st.divider()
+
+    st.caption("MBTI는 진로 선택의\n참고 자료로 활용해 주세요.")
+
+
+# =========================================================
+# 페이지 1 : 홈
+# =========================================================
+
+if st.session_state.page == "home":
+
+    st.markdown(
+        '<div class="main-title">🧭 꿈꾸는 나침반</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="subtitle">나의 성향에서 시작하는 즐거운 진로 탐색</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown("""
+    <div class="card">
+        <h2>🌿 어떤 직업이 나에게 잘 맞을까?</h2>
+        <p style="color:#687D78; line-height:1.8;">
+        진로를 정하는 일은 생각보다 어려워요.<br>
+        내가 좋아하는 것과 잘하는 것이 무엇인지 알아가는 것부터 시작해 봐요!
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+
+    if st.button("🧭 MBTI로 진로 탐색 시작하기"):
+        go_to("mbti")
+        st.rerun()
+
+    st.write("")
+
+    st.markdown("""
+    <div class="tip-card">
+        <div class="tip-title">💡 이 앱은 이렇게 사용해요</div>
+        <div class="tip-text">
+        ① 나의 MBTI를 선택해요<br>
+        ② 나와 잘 맞을 수 있는 직업 3가지를 살펴봐요<br>
+        ③ 관심 있는 직업을 직접 더 알아봐요
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="footer">
+        🌱 나에게 맞는 답을 찾는 것보다<br>
+        나에게 맞는 길을 찾아가는 과정이 더 중요해요.
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# =========================================================
+# 페이지 2 : MBTI 진로 탐색
+# =========================================================
+
+elif st.session_state.page == "mbti":
+
+    st.markdown(
+        '<div class="page-title">🧭 MBTI 진로 탐색</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="page-description">나의 성향을 선택하고 어울릴 수 있는 직업을 알아봐요.</div>',
+        unsafe_allow_html=True
+    )
+
+    mbti = st.selectbox(
+        "✨ 나의 MBTI를 선택해 주세요",
+        list(CAREERS.keys())
+    )
+
+    data = CAREERS[mbti]
+
+    st.markdown(
+        f"""
+        <div class="mbti-card">
+            <div class="mbti-name">{mbti} · {data['title']}</div>
+            <div class="mbti-description">{data['description']}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.subheader("🎯 추천 직업 TOP 3")
+
+    for index, (job, reason) in enumerate(data["jobs"], 1):
+
+        st.markdown(
+            f"""
+            <div class="card">
+                <div class="career-number">{index}번째 추천</div>
+                <div class="career-title">💼 {job}</div>
+                <div class="career-description">{reason}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.info(
+        "🌱 추천 결과는 '이 직업이 반드시 잘 맞는다'는 의미가 아니에요. "
+        "새로운 직업을 발견하는 출발점으로 활용해 보세요!"
+    )
+
+    if st.button("🌱 진로 탐색 TIP 보기"):
+        go_to("tips")
+        st.rerun()
+
+
+# =========================================================
+# 페이지 3 : 진로 TIP
+# =========================================================
+
+elif st.session_state.page == "tips":
+
+    st.markdown(
+        '<div class="page-title">🌱 나의 진로 TIP</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="page-description">진로를 고민할 때 이런 것들을 함께 생각해 봐요.</div>',
+        unsafe_allow_html=True
+    )
+
+    tips = [
+        (
+            "🔎 좋아하는 것을 찾아보기",
+            "시간 가는 줄 모르고 하는 활동이 무엇인지 생각해 보세요. "
+            "게임, 그림, 만들기, 사람들과 이야기하기 등 사소한 것도 좋은 단서가 될 수 있어요."
+        ),
+        (
+            "💪 잘하는 것 발견하기",
+            "친구나 선생님에게 내가 잘하는 것이 무엇인지 물어보는 것도 좋은 방법이에요. "
+            "스스로는 당연하게 생각했던 능력이 강점일 수도 있어요."
+        ),
+        (
+            "🧪 직접 경험해 보기",
+            "관심 있는 분야가 있다면 관련 동아리, 프로젝트, 대회, 체험 활동 등을 경험해 보세요. "
+            "직접 해보면 생각했던 것과 실제가 다른지도 알 수 있어요."
+        ),
+        (
+            "📚 직업을 자세히 알아보기",
+            "직업 이름만 보고 판단하지 말고 실제로 어떤 일을 하는지, "
+            "어떤 능력이 필요한지, 어떤 환경에서 일하는지 찾아보세요."
+        ),
+        (
+            "🗺️ 하나의 직업에 너무 빨리 결정하지 않기",
+            "고등학생 때 진로가 완전히 정해져 있지 않아도 괜찮아요. "
+            "여러 가능성을 탐색하면서 나에게 맞는 방향을 찾아가면 됩니다."
+        )
+    ]
+
+    for title, text in tips:
+        st.markdown(
+            f"""
+            <div class="tip-card">
+                <div class="tip-title">{title}</div>
+                <div class="tip-text">{text}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.write("")
+
+    st.success(
+        "✨ 진로는 한 번에 정답을 고르는 시험이 아니에요. "
+        "여러 가지를 경험하면서 나에게 맞는 길을 찾아가는 과정이에요!"
+    )
+
+    if st.button("🏠 처음으로 돌아가기"):
+        go_to("home")
+        st.rerun()
+
+
+# =========================================================
+# 공통 하단
+# =========================================================
 
 st.divider()
 
-# MBTI 선택
-mbti = st.selectbox(
-    "✨ 자신의 MBTI를 선택하세요.",
-    options=list(CAREERS.keys())
+st.caption(
+    "🧭 꿈꾸는 나침반 · 청소년 진로 탐색용 프로그램 | "
+    "MBTI는 진로 선택을 위한 참고 자료입니다."
 )
-
-# 선택한 MBTI 데이터
-data = CAREERS[mbti]
-
-st.subheader(f"{mbti} · {data['title']}")
-st.write(data["description"])
-
-st.divider()
-
-st.subheader("🎯 추천 직업 TOP 3")
-
-for index, (job, reason) in enumerate(data["jobs"], 1):
-    with st.container(border=True):
-        st.markdown(f"## {index}위 · {job}")
-        st.write(reason)
-
-st.divider()
-
-st.subheader("🌱 진로 탐색 TIP")
-
-st.write(
-    """
-    MBTI와 잘 맞는 직업이라고 해서 반드시 그 직업을 선택해야 하는 것은 아니에요.
-
-    진로를 결정할 때는 **흥미, 적성, 가치관, 능력, 학습 경험** 등을
-    함께 고려하는 것이 좋아요.
-
-    관심 있는 직업이 있다면 관련된 수업이나 동아리, 프로젝트 등을
-    직접 경험해 보는 것도 좋은 방법이에요! 🚀
-    """
-)
-
-st.caption("※ 이 프로그램은 청소년의 진로 탐색을 위한 참고용 프로그램입니다.")
+```
